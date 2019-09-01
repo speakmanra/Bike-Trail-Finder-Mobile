@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { View, Text, Stylesheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import { ListItem } from "react-native-elements";
 
-class FetchTest extends Component {
+class GetTrails extends Component {
   constructor() {
     super();
     this.state = {
@@ -23,9 +24,19 @@ class FetchTest extends Component {
         this.setState({ trails: trails });
       });
   }
+
   render() {
-    return <View>{this.state.trails}</View>;
+    return <View style={styles.container}>{this.state.trails}</View>;
   }
 }
 
-export default FetchTest;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center"
+  }
+});
+
+export default GetTrails;

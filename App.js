@@ -1,12 +1,14 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import FetchTest from "./components/FetchTest";
+import AppHeader from "./components/AppHeader";
+import GetTrails from "./components/GetTrails";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <FetchTest />
+      <AppHeader />
+      <GetTrails />
     </View>
   );
 }
