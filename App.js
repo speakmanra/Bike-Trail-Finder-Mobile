@@ -1,14 +1,11 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import AppHeader from "./components/AppHeader";
-import GetTrails from "./components/GetTrails";
+import FindTrails from "./views/FindTrails";
+import Home from "./views/Home";
 
-export default function App() {
-  return (
-    <View>
-      <AppHeader />
-      <GetTrails />
-    </View>
-  );
+export default class App extends React.Component {
+  render() {
+    return <FindTrails />;
+  }
 }
