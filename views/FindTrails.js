@@ -1,15 +1,12 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { ListItem, Rating, Button } from "react-native-elements";
-import { createAppContainer } from "react-navigation";
-import { createStackNavigator } from "react-navigation-stack";
-import Axios from "axios";
 
-import Home from "./Home";
+import Axios from "axios";
 
 class FindTrails extends Component {
   static navigationOptions = {
-    title: "Home",
+    title: "Find Trails",
     headerStyle: {
       backgroundColor: "#7a0800"
     },
@@ -18,7 +15,6 @@ class FindTrails extends Component {
       fontWeight: "bold"
     }
   };
-
   state = {
     isLoading: false,
     trails: [],
@@ -46,7 +42,8 @@ class FindTrails extends Component {
             response.data.trails.map(trail => ({
               name: `${trail.name}`,
               id: `${trail.id}`,
-              stars: `${trail.stars}`
+              stars: `${trail.stars}`,
+              pic: `${trail.imgSqSmall}`
             }))
           )
           //Update trails object
@@ -87,6 +84,8 @@ class FindTrails extends Component {
               <ListItem
                 key={trail.id}
                 title={trail.name}
+                leftAvatar={{ source: { uri: trail.pic } }}
+                onPress={() => this.props.navigation.navigate("TrailDetails")}
                 subtitle={
                   <Rating
                     style={styles.starRating}
@@ -122,7 +121,7 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   starRating: {
-    marginRight: 230
+    marginRight: 170
   },
   loading: {
     flex: 1,
@@ -132,9 +131,4 @@ const styles = StyleSheet.create({
   }
 });
 
-const AppNavigator = createStackNavigator({
-  Home: Home,
-  FindTrails: FindTrails
-});
-
-export default createAppContainer(AppNavigator, FindTrails);
+export default FindTrails;
