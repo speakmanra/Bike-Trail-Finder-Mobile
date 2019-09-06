@@ -62,7 +62,7 @@ class FindTrails extends Component {
   }
 
   componentDidMount() {
-    // this.getUsers();
+    this.getLocation();
   }
 
   render() {
@@ -70,12 +70,12 @@ class FindTrails extends Component {
     return (
       <View style={{ height: 700 }}>
         <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <Button
+          {/* <Button
             onPress={() => this.getLocation()}
             title='Get Location'
             type='outline'
             style={{ marginTop: 10, marginBottom: 10 }}
-          />
+          /> */}
           {this.state.error ? <Text>Error: {this.state.error}</Text> : null}
         </View>
         <ScrollView>
@@ -84,8 +84,17 @@ class FindTrails extends Component {
               <ListItem
                 key={trail.id}
                 title={trail.name}
-                leftAvatar={{ source: { uri: trail.pic } }}
-                onPress={() => this.props.navigation.navigate("TrailDetails")}
+                leftAvatar={
+                  trail.pic != ""
+                    ? { source: { uri: trail.pic } }
+                    : { icon: { name: "directions_bike", type: "material" } }
+                }
+                onPress={() =>
+                  this.props.navigation.navigate("TrailDetails", {
+                    itemId: `${trail.id}`,
+                    trailName: `${trail.name}`
+                  })
+                }
                 subtitle={
                   <Rating
                     style={styles.starRating}
