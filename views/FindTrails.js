@@ -87,7 +87,7 @@ class FindTrails extends Component {
                 leftAvatar={
                   trail.pic != ""
                     ? { source: { uri: trail.pic } }
-                    : { icon: { name: "directions_bike", type: "material" } }
+                    : { icon: { name: "home" } }
                 }
                 onPress={() =>
                   this.props.navigation.navigate("TrailDetails", {
@@ -111,9 +111,9 @@ class FindTrails extends Component {
             // <Text style={styles.loading}>Loading...</Text>
             <Button
               style={styles.loading}
-              title='Loading button'
+              title="Loading button"
               loading
-              type='clear'
+              type="clear"
             />
           )}
         </ScrollView>
