@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { ListItem, Rating, Button } from "react-native-elements";
-import { Picker, Icon } from "native-base";
+import { ListItem, Rating, SearchBar } from "react-native-elements";
+import { Picker, Form } from "native-base";
 import { Spinner } from "@shoutem/ui";
 
 import Axios from "axios";
@@ -15,31 +15,16 @@ class FindTrails extends Component {
     headerTintColor: "#fff",
     headerTitleStyle: {
       fontWeight: "bold"
-    },
-    headerRight: (
-      <Picker
-        mode='dropdown'
-        iosHeader='Filter'
-        iosIcon={<Icon name='arrow-down' />}
-        style={{ color: "white" }}
-        // selectedValue={this.state.selected}
-        // onValueChange={this.onValueChange.bind(this)}
-      >
-        <Picker.Item label='Wallet' value='key0' />
-        <Picker.Item label='ATM Card' value='key1' />
-        <Picker.Item label='Debit Card' value='key2' />
-        <Picker.Item label='Credit Card' value='key3' />
-        <Picker.Item label='Net Banking' value='key4' />
-      </Picker>
-    )
+    }
   };
   state = {
     isLoading: false,
     trails: [],
     error: null,
-    address: "",
+    zip: "",
     lon: null,
-    lat: null
+    lat: null,
+    distance: "50"
   };
 
   getLocation() {
@@ -51,8 +36,8 @@ class FindTrails extends Component {
           lon: position.coords.longitude,
           error: null
         });
-        const { lat, lon } = this.state;
-        const locationSearch = `https://www.mtbproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=10&key=200482461-145880d2afee92517e23bef39c761571`;
+        const { lat, lon, distance } = this.state;
+        const locationSearch = `https://www.mtbproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=${distance}&maxResults=500&sort=distance&key=200482461-145880d2afee92517e23bef39c761571`;
         Axios.get(locationSearch)
           // .then(response => console.log(response))
           // pull the data
@@ -79,6 +64,17 @@ class FindTrails extends Component {
     );
   }
 
+  onValueChange(value) {
+    this.setState({
+      distance: value
+    });
+    this.getLocation();
+  }
+
+  updateSearch = zip => {
+    this.setState({ zip });
+  };
+
   componentDidMount() {
     this.getLocation();
   }
@@ -86,14 +82,42 @@ class FindTrails extends Component {
   render() {
     const { isLoading, trails, error } = this.state;
     return (
-      <View stgityle={{ height: 700 }}>
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
-          {/* <Button
-            onPress={() => this.getLocation()}
-            title='Get Location'
-            type='outline'
-            style={{ marginTop: 10, marginBottom: 10 }}
-          /> */}
+      <View style={{ height: 700 }}>
+        <View style={styles.topRow}>
+          <View style={{ flex: 4 }}>
+            <SearchBar
+              placeholder='Zip Code...'
+              onChangeText={this.updateSearch}
+              value={this.state.zip}
+              containerStyle={{ backgroundColor: "rgb(27, 28, 32)" }}
+            />
+          </View>
+          <View
+            style={{
+              flex: 2,
+              paddingTop: 10,
+              paddingLeft: 15,
+              backgroundColor: "rgb(27, 28, 32)"
+            }}
+          >
+            <Form>
+              <Picker
+                mode='dropdown'
+                placeholder='50 Miles'
+                placeholderStyle={{ color: "#2874F0" }}
+                textStyle={{ color: "white" }}
+                note={false}
+                selectedValue={this.state.distance}
+                onValueChange={this.onValueChange.bind(this)}
+              >
+                <Picker.Item label='10 Miles' value='10' />
+                <Picker.Item label='50 Miles' value='50' />
+                <Picker.Item label='100 Miles' value='100' />
+                <Picker.Item label='200 Miles' value='200' />
+              </Picker>
+            </Form>
+          </View>
+
           {this.state.error ? <Text>Error: {this.state.error}</Text> : null}
         </View>
         <ScrollView>
@@ -142,6 +166,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
     textAlign: "center"
+  },
+  topRow: {
+    flexDirection: "row"
   },
   starRating: {
     marginRight: 170
