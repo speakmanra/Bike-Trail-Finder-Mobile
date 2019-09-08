@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { Image, ActivityIndicator, Button } from "react-native-elements";
+import { Button, Image } from "react-native-elements";
 
 class Home extends React.Component {
   static navigationOptions = {
@@ -29,12 +29,12 @@ class Home extends React.Component {
             alignSelf: "center"
           }}
         />
-        <View
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
+        <View style={{ flex: 1, alignItems: "center" }}>
           <Button
-            raised
-            title="Find Trails"
+            style={{ marginTop: 250 }}
+            buttonStyle={{ backgroundColor: "black" }}
+            title='Find Trails'
+            icon={{ name: "navigation", color: "white" }}
             onPress={() => this.props.navigation.navigate("FindTrails")}
           />
         </View>

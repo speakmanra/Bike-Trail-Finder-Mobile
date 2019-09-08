@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { ListItem, Rating, Button } from "react-native-elements";
+import { Picker, Icon } from "native-base";
+import { Spinner } from "@shoutem/ui";
 
 import Axios from "axios";
 
@@ -13,7 +15,23 @@ class FindTrails extends Component {
     headerTintColor: "#fff",
     headerTitleStyle: {
       fontWeight: "bold"
-    }
+    },
+    headerRight: (
+      <Picker
+        mode='dropdown'
+        iosHeader='Filter'
+        iosIcon={<Icon name='arrow-down' />}
+        style={{ color: "white" }}
+        // selectedValue={this.state.selected}
+        // onValueChange={this.onValueChange.bind(this)}
+      >
+        <Picker.Item label='Wallet' value='key0' />
+        <Picker.Item label='ATM Card' value='key1' />
+        <Picker.Item label='Debit Card' value='key2' />
+        <Picker.Item label='Credit Card' value='key3' />
+        <Picker.Item label='Net Banking' value='key4' />
+      </Picker>
+    )
   };
   state = {
     isLoading: false,
@@ -68,7 +86,7 @@ class FindTrails extends Component {
   render() {
     const { isLoading, trails, error } = this.state;
     return (
-      <View style={{ height: 700 }}>
+      <View stgityle={{ height: 700 }}>
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           {/* <Button
             onPress={() => this.getLocation()}
@@ -87,7 +105,7 @@ class FindTrails extends Component {
                 leftAvatar={
                   trail.pic != ""
                     ? { source: { uri: trail.pic } }
-                    : { icon: { name: "home" } }
+                    : { icon: { name: "photo" } }
                 }
                 onPress={() =>
                   this.props.navigation.navigate("TrailDetails", {
@@ -109,12 +127,8 @@ class FindTrails extends Component {
             ))
           ) : (
             // <Text style={styles.loading}>Loading...</Text>
-            <Button
-              style={styles.loading}
-              title="Loading button"
-              loading
-              type="clear"
-            />
+
+            <Spinner size='large' style={styles.loading} />
           )}
         </ScrollView>
       </View>
