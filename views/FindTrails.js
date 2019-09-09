@@ -19,6 +19,7 @@ class FindTrails extends Component {
   };
   state = {
     isLoading: false,
+    firstLoad: true,
     trails: [],
     error: null,
     zip: "",
@@ -26,6 +27,34 @@ class FindTrails extends Component {
     lat: null,
     distance: "50"
   };
+
+  apiRequest() {
+    console.log(this.state.zip);
+    const { lat, lon, distance } = this.state;
+    const locationSearch = `https://www.mtbproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=${distance}&maxResults=500&sort=distance&key=200482461-145880d2afee92517e23bef39c761571`;
+    console.log(locationSearch);
+    Axios.get(locationSearch)
+      // .then(response => console.log(response))
+      // pull the data
+      .then(response =>
+        response.data.trails.map(trail => ({
+          name: `${trail.name}`,
+          id: `${trail.id}`,
+          stars: `${trail.stars}`,
+          pic: `${trail.imgSqSmall}`
+        }))
+      )
+      //Update trails object
+      .then(trails =>
+        this.setState({
+          trails,
+          isLoading: false,
+          firstLoad: false
+        })
+      )
+      //Handle Errors
+      .catch(error => this.setState({ error, isLoading: false }));
+  }
 
   getLocation() {
     this.setState({ isLoading: true });
@@ -36,32 +65,26 @@ class FindTrails extends Component {
           lon: position.coords.longitude,
           error: null
         });
-        const { lat, lon, distance } = this.state;
-        const locationSearch = `https://www.mtbproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=${distance}&maxResults=500&sort=distance&key=200482461-145880d2afee92517e23bef39c761571`;
-        Axios.get(locationSearch)
-          // .then(response => console.log(response))
-          // pull the data
-          .then(response =>
-            response.data.trails.map(trail => ({
-              name: `${trail.name}`,
-              id: `${trail.id}`,
-              stars: `${trail.stars}`,
-              pic: `${trail.imgSqSmall}`
-            }))
-          )
-          //Update trails object
-          .then(trails =>
-            this.setState({
-              trails,
-              isLoading: false
-            })
-          )
-          //Handle Errors
-          .catch(error => this.setState({ error, isLoading: false }));
+        this.apiRequest();
       },
       error => this.setState({ error: error.message }),
       { enableHighAccuracy: true, timeout: 1000 }
     );
+  }
+
+  getAddressLocation() {
+    this.setState({ isLoading: true });
+    const { zip } = this.state;
+    Axios.get(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${zip}&key=AIzaSyAj-LLHtQtEnncUguRkUKl6g7vPXkUrxOs`
+    )
+      .then(result =>
+        this.setState({
+          lat: result.data.results[0].geometry.location.lat,
+          lon: result.data.results[0].geometry.location.lng
+        })
+      )
+      .then(this.apiRequest());
   }
 
   onValueChange(value) {
@@ -70,56 +93,66 @@ class FindTrails extends Component {
     });
     this.getLocation();
   }
-
+  //Update search state
   updateSearch = zip => {
     this.setState({ zip });
   };
 
+  searchAddress() {
+    this.getAddressLocation();
+  }
+
+  //Get location on startup
   componentDidMount() {
     this.getLocation();
   }
 
   render() {
-    const { isLoading, trails, error } = this.state;
+    const { isLoading, trails, error, firstLoad } = this.state;
     return (
       <View style={{ height: 700 }}>
-        <View style={styles.topRow}>
-          <View style={{ flex: 4 }}>
-            <SearchBar
-              placeholder='Zip Code...'
-              onChangeText={this.updateSearch}
-              value={this.state.zip}
-              containerStyle={{ backgroundColor: "rgb(27, 28, 32)" }}
-            />
-          </View>
-          <View
-            style={{
-              flex: 2,
-              paddingTop: 10,
-              paddingLeft: 15,
-              backgroundColor: "rgb(27, 28, 32)"
-            }}
-          >
-            <Form>
-              <Picker
-                mode='dropdown'
-                placeholder='50 Miles'
-                placeholderStyle={{ color: "#2874F0" }}
-                textStyle={{ color: "white" }}
-                note={false}
-                selectedValue={this.state.distance}
-                onValueChange={this.onValueChange.bind(this)}
-              >
-                <Picker.Item label='10 Miles' value='10' />
-                <Picker.Item label='50 Miles' value='50' />
-                <Picker.Item label='100 Miles' value='100' />
-                <Picker.Item label='200 Miles' value='200' />
-              </Picker>
-            </Form>
-          </View>
+        {!firstLoad ? (
+          <View style={styles.topRow}>
+            <View style={{ flex: 4 }}>
+              <SearchBar
+                placeholder='Address(Not Implemented)'
+                onChangeText={this.updateSearch}
+                value={this.state.zip}
+                // onSubmitEditing={this.searchAddress.bind(this)}
+                containerStyle={{ backgroundColor: "rgb(27, 28, 32)" }}
+              />
+            </View>
+            <View
+              style={{
+                flex: 2,
+                paddingTop: 10,
+                paddingLeft: 15,
+                backgroundColor: "rgb(27, 28, 32)"
+              }}
+            >
+              <Form>
+                <Picker
+                  mode='dropdown'
+                  placeholder='50 Miles'
+                  placeholderStyle={{ color: "#2874F0" }}
+                  textStyle={{ color: "white" }}
+                  note={false}
+                  selectedValue={this.state.distance}
+                  onValueChange={this.onValueChange.bind(this)}
+                >
+                  <Picker.Item label='10 Miles' value='10' />
+                  <Picker.Item label='50 Miles' value='50' />
+                  <Picker.Item label='100 Miles' value='100' />
+                  <Picker.Item label='200 Miles' value='200' />
+                </Picker>
+              </Form>
+            </View>
 
-          {this.state.error ? <Text>Error: {this.state.error}</Text> : null}
-        </View>
+            {this.state.error ? <Text>Error: {this.state.error}</Text> : null}
+          </View>
+        ) : (
+          <Text></Text>
+        )}
         <ScrollView>
           {!isLoading ? (
             trails.map(trail => (
