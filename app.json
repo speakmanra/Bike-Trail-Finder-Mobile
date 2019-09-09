@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "MTB Trial",
-    "slug": "mtb-trial",
+    "name": "Bike Trail Finder",
+    "slug": "bike-trail-finder",
     "privacy": "public",
     "sdkVersion": "34.0.0",
     "platforms": ["ios", "android", "web"],
@@ -19,7 +19,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.mtbtrials.ryanspeakman"
+      "bundleIdentifier": "com.BikeTrailFinder.ryanspeakman"
     }
   }
 }
