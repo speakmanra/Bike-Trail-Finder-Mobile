@@ -30,10 +30,13 @@ class Home extends React.Component {
           }}
         />
         <View style={{ flex: 1, alignItems: "center" }}>
+          <Text style={{ marginTop: 200, fontSize: 40 }}>
+            Bike Trail Finder
+          </Text>
           <Button
-            style={{ marginTop: 250 }}
+            style={{ marginTop: 100 }}
             buttonStyle={{ backgroundColor: "black" }}
-            title='Find Trails'
+            title="Find Trails"
             icon={{ name: "navigation", color: "white" }}
             onPress={() => this.props.navigation.navigate("FindTrails")}
           />
