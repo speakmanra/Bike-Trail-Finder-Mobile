@@ -29,7 +29,6 @@ class FindTrails extends Component {
   };
 
   apiRequest() {
-    console.log(this.state.zip);
     const { lat, lon, distance } = this.state;
     const locationSearch = `https://www.mtbproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=${distance}&maxResults=500&sort=distance&key=200482461-145880d2afee92517e23bef39c761571`;
     console.log(locationSearch);
@@ -72,20 +71,17 @@ class FindTrails extends Component {
     );
   }
 
-  getAddressLocation() {
-    this.setState({ isLoading: true });
-    const { zip } = this.state;
+  getAddressLocation = zip => {
     Axios.get(
       `https://maps.googleapis.com/maps/api/geocode/json?address=${zip}&key=AIzaSyAj-LLHtQtEnncUguRkUKl6g7vPXkUrxOs`
-    )
-      .then(result =>
-        this.setState({
-          lat: result.data.results[0].geometry.location.lat,
-          lon: result.data.results[0].geometry.location.lng
-        })
-      )
-      .then(this.apiRequest());
-  }
+    ).then(result => {
+      this.setState({
+        lat: result.data.results[0].geometry.location.lat,
+        lon: result.data.results[0].geometry.location.lng
+      });
+      this.apiRequest();
+    });
+  };
 
   onValueChange(value) {
     this.setState({
@@ -98,9 +94,10 @@ class FindTrails extends Component {
     this.setState({ zip });
   };
 
-  searchAddress() {
-    this.getAddressLocation();
-  }
+  searchAddress = () => {
+    this.setState({ isLoading: true });
+    this.getAddressLocation(this.state.zip);
+  };
 
   //Get location on startup
   componentDidMount() {
@@ -108,6 +105,7 @@ class FindTrails extends Component {
   }
 
   render() {
+    console.log(this.state.lat);
     const { isLoading, trails, error, firstLoad } = this.state;
     return (
       <View style={{ height: 700 }}>
@@ -115,10 +113,10 @@ class FindTrails extends Component {
           <View style={styles.topRow}>
             <View style={{ flex: 4 }}>
               <SearchBar
-                placeholder='Address(Not Implemented)'
+                placeholder="Address"
                 onChangeText={this.updateSearch}
                 value={this.state.zip}
-                // onSubmitEditing={this.searchAddress.bind(this)}
+                onSubmitEditing={this.searchAddress}
                 containerStyle={{ backgroundColor: "rgb(27, 28, 32)" }}
               />
             </View>
@@ -132,18 +130,18 @@ class FindTrails extends Component {
             >
               <Form>
                 <Picker
-                  mode='dropdown'
-                  placeholder='50 Miles'
+                  mode="dropdown"
+                  placeholder="50 Miles"
                   placeholderStyle={{ color: "#2874F0" }}
                   textStyle={{ color: "white" }}
                   note={false}
                   selectedValue={this.state.distance}
                   onValueChange={this.onValueChange.bind(this)}
                 >
-                  <Picker.Item label='10 Miles' value='10' />
-                  <Picker.Item label='50 Miles' value='50' />
-                  <Picker.Item label='100 Miles' value='100' />
-                  <Picker.Item label='200 Miles' value='200' />
+                  <Picker.Item label="10 Miles" value="10" />
+                  <Picker.Item label="50 Miles" value="50" />
+                  <Picker.Item label="100 Miles" value="100" />
+                  <Picker.Item label="200 Miles" value="200" />
                 </Picker>
               </Form>
             </View>
@@ -185,7 +183,7 @@ class FindTrails extends Component {
           ) : (
             // <Text style={styles.loading}>Loading...</Text>
 
-            <Spinner size='large' style={styles.loading} />
+            <Spinner size="large" style={styles.loading} />
           )}
         </ScrollView>
       </View>
