@@ -14,7 +14,7 @@ const navigator = createStackNavigator(
     TrailDetails: TrailDetails
   },
   {
-    initialRouteName: "Home",
+    initialRouteName: "TrailDetails",
     defaultNavigationOptions: {}
   }
 );

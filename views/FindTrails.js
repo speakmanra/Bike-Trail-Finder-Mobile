@@ -31,7 +31,6 @@ class FindTrails extends Component {
   apiRequest() {
     const { lat, lon, distance } = this.state;
     const locationSearch = `https://www.mtbproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=${distance}&maxResults=500&sort=distance&key=200482461-145880d2afee92517e23bef39c761571`;
-    console.log(locationSearch);
     Axios.get(locationSearch)
       // .then(response => console.log(response))
       // pull the data
@@ -105,7 +104,6 @@ class FindTrails extends Component {
   }
 
   render() {
-    console.log(this.state.lat);
     const { isLoading, trails, error, firstLoad } = this.state;
     return (
       <View style={{ height: 700 }}>

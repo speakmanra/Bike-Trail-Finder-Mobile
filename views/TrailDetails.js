@@ -3,6 +3,8 @@ import { View, Button, ActivityIndicator, StyleSheet } from "react-native";
 import { Image, Rating, Text, Divider } from "react-native-elements";
 import Axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
+import { Spinner } from "@shoutem/ui";
+import { white } from "ansi-colors";
 
 class TrailDetails extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -24,13 +26,13 @@ class TrailDetails extends Component {
 
   getTrailDetails() {
     this.setState({ isLoading: true });
-    const { navigation } = this.props;
-    const trailId = navigation.getParam("itemId", "NO-ID");
-    const trailLink = `https://www.mtbproject.com/data/get-trails-by-id?ids=${trailId}&key=200482461-145880d2afee92517e23bef39c761571`;
+    // const { navigation } = this.props;
+    // const trailId = navigation.getParam("itemId", "NO-ID");
+    // const trailLink = `https://www.mtbproject.com/data/get-trails-by-id?ids=${trailId}&key=200482461-145880d2afee92517e23bef39c761571`;
     // ---------------------------------
-    // TESTER
-    // const trailLink =
-    //   "https://www.mtbproject.com/data/get-trails-by-id?ids=4670265&key=200482461-145880d2afee92517e23bef39c761571";
+    // TESTER;
+    const trailLink =
+      "https://www.mtbproject.com/data/get-trails-by-id?ids=4670265&key=200482461-145880d2afee92517e23bef39c761571";
     // ---------------------------------
 
     Axios.get(trailLink)
@@ -74,7 +76,7 @@ class TrailDetails extends Component {
       <Fragment>{this.renderPage()}</Fragment>
     ) : (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text>loading...</Text>
+        <Spinner size="large" style={styles.loading} />
       </View>
     );
   }
@@ -134,6 +136,22 @@ class TrailDetails extends Component {
         />
       );
     }
+    function dateFormatter() {
+      let arr = statusDate.split("");
+      let newArr = [];
+
+      for (i = 0; i < arr.length; i++) {
+        if (arr[i] != " ") {
+          newArr.push(arr[i]);
+        } else {
+          break;
+        }
+      }
+
+      return newArr.join("");
+    }
+    let formattedDate = dateFormatter();
+
     //-----------------------------------------------------
     return (
       <View style={{ flex: 1, backgroundColor: "#cccccc" }}>
@@ -145,32 +163,37 @@ class TrailDetails extends Component {
             style={styles.pictureStyle}
             PlaceholderContent={<ActivityIndicator />}
           />
-          <View style={styles.topRow}>
-            {difficultySymbol}
-
-            <Rating
-              style={styles.starRating}
-              ratingTextColor='black'
-              readonly
-              imageSize={30}
-              startingValue={parseFloat(stars)}
-            />
-            <Text style={{ fontSize: 20, marginTop: 26 }}>{length} Mi</Text>
-          </View>
+          <View style={styles.difficultySymbol}>{difficultySymbol}</View>
           <View style={styles.bodyStyle}>
-            <Text h4 style={styles.titleStyle}>
-              Location: {location}
-            </Text>
+            <Text style={styles.location}>{location}</Text>
+            <Text style={styles.conditions}>{status}</Text>
+            <View style={styles.topRow}>
+              <Text style={styles.conditionDetails}>
+                {statusDetails}
+                {"\n"}as of{"\n"}
+                {formattedDate}
+              </Text>
+              <Rating
+                style={styles.starRating}
+                ratingTextColor="black"
+                readonly
+                imageSize={30}
+                startingValue={parseFloat(stars)}
+                tintColor="black"
+              />
+              <Text
+                style={{
+                  fontSize: 20,
+                  alignSelf: "center",
+                  color: "white",
+                  marginTop: 10
+                }}
+              >
+                {length} Mi
+              </Text>
+            </View>
 
-            <Divider style={{ marginTop: 10, height: 2 }} />
-            <Text style={styles.textStyle}>{summary}</Text>
-            <Divider style={{ marginTop: 10, height: 2 }} />
-            <Text h4 style={styles.textStyle}>
-              Trail Conditions: {status}
-            </Text>
-
-            <Text style={styles.textStyle}>{statusDetails}</Text>
-            <Text style={styles.textStyle}>as of {statusDate}</Text>
+            <Text style={styles.summary}>{summary}</Text>
           </View>
         </ScrollView>
       </View>
@@ -179,33 +202,55 @@ class TrailDetails extends Component {
 }
 
 const styles = StyleSheet.create({
+  pictureStyle: {
+    width: 375,
+    height: 450,
+    alignSelf: "center",
+    padding: 0,
+    position: "absolute"
+  },
+  location: {
+    textAlign: "left",
+    marginTop: 10,
+    fontSize: 20,
+    color: "white",
+    marginLeft: 10,
+    marginRight: 10
+  },
+  conditions: {
+    fontSize: 20,
+    marginTop: 10,
+    textAlign: "left",
+    color: "white",
+    marginLeft: 10,
+    marginRight: 10
+  },
+  summary: {
+    fontSize: 20,
+    marginTop: 30,
+    textAlign: "center",
+    color: "black"
+  },
   topRow: {
     flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-around",
-    backgroundColor: "white",
-    paddingBottom: 10
+    backgroundColor: "black",
+    paddingBottom: 10,
+    marginTop: 17
   },
-  textStyle: {
-    fontSize: 20,
-    marginTop: 10,
-    textAlign: "center",
-    color: "black"
-  },
-  pictureStyle: {
-    width: 375,
-    height: 300,
+  conditionDetails: {
     alignSelf: "center",
-    padding: 0
+    color: "white",
+    marginTop: 5
   },
   difficultySymbol: {
     width: 50,
     height: 50,
-    alignSelf: "center",
-    padding: -5,
+    alignSelf: "flex-end",
     marginTop: 10,
-    backgroundColor: "white"
+    marginRight: 5
   },
   starRating: {
     justifyContent: "center",
@@ -214,10 +259,14 @@ const styles = StyleSheet.create({
     alignSelf: "center"
   },
   bodyStyle: {
-    marginLeft: 10,
-    marginRight: 10
+    marginTop: 300
   },
-  titleStyle: { textAlign: "center", marginTop: 10 }
+  loading: {
+    flex: 1,
+    fontSize: 20,
+    textAlign: "center",
+    marginTop: 250
+  }
 });
 
 export default TrailDetails;
